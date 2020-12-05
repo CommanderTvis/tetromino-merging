@@ -1,6 +1,7 @@
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class CellMatrixTest {
     @Test
@@ -51,7 +52,7 @@ class CellMatrixTest {
     @Test
     fun copy() {
         val mat = CellMatrix.fromLines("++", "+*", "++")
-        assertEquals(mat, mat.copy())
+        assertTrue(mat.contentEquals(mat.copy()))
     }
 
     @Test
@@ -62,9 +63,9 @@ class CellMatrixTest {
     @Test
     fun matrixCannotBeEmpty() {
         assertThrows<IllegalArgumentException> { CellMatrix.fromLines() }
-        assertThrows<IllegalArgumentException> { CellMatrix(0, 0) }
-        assertThrows<IllegalArgumentException> { CellMatrix(1, 0) }
-        assertThrows<IllegalArgumentException> { CellMatrix(0, 1) }
+        assertThrows<IllegalArgumentException> { CellMatrix.empty(0, 0) }
+        assertThrows<IllegalArgumentException> { CellMatrix.empty(1, 0) }
+        assertThrows<IllegalArgumentException> { CellMatrix.empty(0, 1) }
     }
 
     @Test
@@ -82,7 +83,7 @@ class CellMatrixTest {
 
     @Test
     fun insertWithAnchor() {
-        val m1 = CellMatrix.fromLines(
+        var m1 = CellMatrix.fromLines(
             "++++",
             "++++",
             "++++",
@@ -94,10 +95,8 @@ class CellMatrixTest {
             "**",
         )
 
-        m1.insertWithAnchor(1 to 1, fig, 0 to 1)
-        println(m1)
         val exp = CellMatrix.fromLines("++++", "**++", "**++", "++++")
-        assertEquals(exp, m1)
+        assertTrue(exp.contentEquals(m1.insertWithAnchor(1 to 1, fig, 0 to 1)!!))
     }
 
     @Test
@@ -109,9 +108,8 @@ class CellMatrixTest {
         )
 
         val fig = CellMatrix.fromLines("*+", "**")
-        m1.insertRightBottom(0 to 0, fig)
         val exp = CellMatrix.fromLines("*++", "**+", "+++")
-        assertEquals(exp, m1)
+        assertTrue(exp.contentEquals(m1.insertRightBottom(0 to 0, fig)!!))
     }
 
     @Test
@@ -130,7 +128,6 @@ class CellMatrixTest {
             "**+",
         )
 
-        m.shrink()
-        assertEquals(exp, m)
+        assertTrue(exp.contentEquals(m.shrink()))
     }
 }
